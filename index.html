@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        position: absolute;
+        height: 100vh;
+        width: 100vw;
+      }
+      body { font: 13px Helvetica, Arial; }
+      form { 
+        background: #000; 
+        padding: 3px; 
+        position: absolute; 
+        bottom: 0; 
+        width: 100%; 
+        display: grid;
+        grid-template-columns: auto 100px;
+        grid-column-gap: 5px;
+      }
+      form input { border: 0; padding: 10px }
+      form button { background: rgb(190, 98, 25); border: none; padding: 10px }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #header {
+        height: 60px;
+        width: 100%;
+        background: rgb(190, 98, 25);
+        color: #FFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      Socket.io Chat
+    </div>
+    <ul id="messages"></ul>
+    <form onsubmit="return submitForm(event)" action="">
+      <input id="m" autocomplete="off" />
+      <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io()
+           
+      // envia mensagem (emite evento)
+      const submitForm = (e) => {
+        e.preventDefault()
+        let input = document.querySelector('#m')
+        socket.emit('chat message', input.value)
+        input.value = ''
+      }
+
+      // adiciona mensagem na tela quando recebida.
+      socket.on('chat message', (msg) => {
+        let messages = document.querySelector('#messages')
+        let text = document.createTextNode(msg)
+        let newMsg = document.createElement('li')
+        newMsg.innerHTML = msg
+        messages.appendChild(newMsg)
+      })
+    </script>
+  </body>
+</html>
