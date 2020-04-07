@@ -49,7 +49,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      let socket = io()
+      let socket = io('ws://localhost:3000', {transports: ['websocket']})
            
       // envia mensagem (emite evento)
       const submitForm = (e) => {
