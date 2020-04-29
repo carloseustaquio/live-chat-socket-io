@@ -2,13 +2,14 @@ const express = require('express');
 const http = require('http')
 const path = require('path')
 const socketIO = require('socket.io')
+const router = express.Router();
 
 const app = express()
 const server = http.createServer(app)
 const io = socketIO(server)
 app.use(express.static(path.join(__dirname + '/public')));
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.sendFile('index.html')
 })
 
@@ -19,11 +20,9 @@ io.on('connection', socket => {
 
   socket.on('change_username', data => {
     socket.username = data.username
-    // console.log('username: ', socket.username)
   })
 
   socket.on('chat_message', data => {
-    console.log('data: ', data, socket.username)
     io.emit('chat_message', { msg: data, user: socket.username })
   })
 })
