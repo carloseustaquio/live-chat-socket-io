@@ -1,20 +1,26 @@
 const express = require('express');
-const http = require('http')
 const path = require('path')
-const socketIO = require('socket.io')
-const router = express.Router();
 
 const app = express()
-const server = http.createServer(app)
-const io = socketIO(server)
-app.use(express.static(path.join(__dirname + '/public')));
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
 
-router.get('/', (req, res) => {
-  res.sendFile('index.html')
+// app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'public'))
+app.engine('html', require('ejs').renderFile)
+app.set('view engine', 'html')
+
+app.get('/', (req, res) => {
+  res.render('index.html')
 })
 
+let messages = []
+
 io.on('connection', socket => {
-  // console.log("new user")
+  console.log("socket conectado", socket.id)
+
+  socket.emit('previous_messages', messages)
 
   socket.username = "Anonymus"
 
@@ -23,34 +29,10 @@ io.on('connection', socket => {
   })
 
   socket.on('chat_message', data => {
-    io.emit('chat_message', { msg: data, user: socket.username })
+    console.log(data)
+    messages.push(data)
+    io.emit('received_message', data)
   })
 })
 
 server.listen(3000, () => console.log("listening on port 3000"))
-
-// const app = require('express')();
-// const http = require('http').createServer(app);
-// const io = require('socket.io')(http);
-
-// app.get('/', function(req, res){
-//   res.sendFile(__dirname + '/index.html');
-// });
-
-// io.on('connection', socket => {
-//   console.log('a user connected!');
-
-//   socket.on('chat_message', msg => {
-//     console.log('message: ', msg)
-
-//     io.emit('chat_message', msg)
-//   })
-
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected')
-//   })
-// })
-
-// http.listen(3000, function(){
-//   console.log('listening on *:3000');
-// });
