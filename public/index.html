@@ -15,7 +15,7 @@
     <div id="name-input">
       <label for="username">Input your name</label>
       <input name="username" id="username" type="text">
-      <button onclick="changeUsername()">Save</button>
+      <!-- <button onclick="changeUsername()">Save</button> -->
     </div>
     <ul id="messages"></ul>
     <form>
@@ -48,6 +48,7 @@
         if (author.length && message.length) {
           let msgObject = { author, message }
           socket.emit('chat_message', msgObject)
+          $("#message").val("")
         }
       })
     </script>
