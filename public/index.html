@@ -29,11 +29,11 @@
         $("#messages").append(`<div class="message"><strong>${data.author}: </strong>${data.message}</div>`)
       }
 
-      socket.on('previous_messages', messages => {
-        messages.forEach((data) => {
-          renderMessage(data)
-        })
-      })
+      // socket.on('previous_messages', messages => {
+      //   messages.forEach((data) => {
+      //     renderMessage(data)
+      //   })
+      // })
 
       socket.on('received_message', data => {
         renderMessage(data)

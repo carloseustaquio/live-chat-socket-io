@@ -20,7 +20,7 @@ let messages = []
 io.on('connection', socket => {
   console.log("socket conectado", socket.id)
 
-  socket.emit('previous_messages', messages)
+  // socket.emit('previous_messages', messages)
 
   socket.username = "Anonymus"
 
@@ -30,7 +30,7 @@ io.on('connection', socket => {
 
   socket.on('chat_message', data => {
     console.log(data)
-    messages.push(data)
+    // messages.push(data)
     io.emit('received_message', data)
   })
 })
