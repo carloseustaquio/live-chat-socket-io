@@ -23,7 +23,7 @@
       <button>Send</button>
     </form>
     <script type="text/javascript">
-      let socket = io.connect('http://localhost:3000', {transports: ['websocket']})
+      let socket = io.connect(`http://localhost:${process.env.PORT || 3000}`, {transports: ['websocket']})
            
       const renderMessage = (data) => {
         $("#messages").append(`<div class="message"><strong>${data.author}: </strong>${data.message}</div>`)
