@@ -1,8 +1,10 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title>Socket.IO chat</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0, width=device-width">
+    
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body {
@@ -35,36 +37,58 @@
         align-items: center;
         justify-content: center;
       }
+      #name-input {
+        margin-left: auto;
+        display: flex;
+        flex-flow: column;
+        width: 200px;
+        padding: 10px;
+        border: solid 1px rgb(190, 98, 25);
+      }
     </style>
   </head>
   <body>
     <div id="header">
       Socket.io Chat
     </div>
+    <div id="name-input">
+      <label for="username">Input your name</label>
+      <input name="username" id="username" type="text">
+      <button onclick="changeUsername()">Save</button>
+    </div>
     <ul id="messages"></ul>
     <form onsubmit="return submitForm(event)" action="">
-      <input id="m" autocomplete="off" />
+      <input id="message" autocomplete="off" />
       <button>Send</button>
     </form>
-
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script>
-      let socket = io('ws://localhost:3000', {transports: ['websocket']})
+      let socket = io.connect('http://localhost:3000', {transports: ['websocket']})
            
+      const changeUsername = () => {
+        const name = document.querySelector("#username")
+        socket.emit("change_username", { username: name.value })
+        name.value = ''
+      }
       // envia mensagem (emite evento)
       const submitForm = (e) => {
         e.preventDefault()
-        let input = document.querySelector('#m')
-        socket.emit('chat message', input.value)
-        input.value = ''
+        let message = document.querySelector('#message')
+        socket.emit('chat_message', message.value)
+        message.value = ''
       }
 
       // adiciona mensagem na tela quando recebida.
-      socket.on('chat message', (msg) => {
+      socket.on('chat_message', ({ msg, user }) => {
         let messages = document.querySelector('#messages')
-        let text = document.createTextNode(msg)
+        let msgText = document.createTextNode(msg)
         let newMsg = document.createElement('li')
-        newMsg.innerHTML = msg
+        let username = document.createTextNode(`${user}: `)
+        let newUser = document.createElement('small')
+        newMsg.appendChild(username)
+        newMsg.appendChild(msgText)
+        // newUser.username = username
+        // messages.appendChild(newUser)
         messages.appendChild(newMsg)
       })
     </script>
